@@ -1,0 +1,55 @@
+version: '3'
+
+services: 
+    reverse_proxy:
+        container_name: nginx_revproxy
+        build:
+            context: ./nginx/reverse_proxy/
+            dockerfile: nginx_revproxy.Dockerfile
+
+        volumes: 
+            - ./nginx/reverse_proxy/conf/nginx/:/etc/nginx/
+
+        ports: 
+            - 80:80
+            - 443:443
+        
+        networks: 
+            - website_stack
+        
+    webserver:
+        container_name: nginx_webserver
+        build:
+            context: ./nginx/webserver/
+            dockerfile: nginx_webserver.Dockerfile 
+
+        volumes: 
+            - ./nginx/webserver/conf/nginx/:/etc/nginx/
+
+        expose:
+            - '8080'
+
+        networks: 
+            - website_stack
+        
+    database:
+        container_name: mariadb
+        build:
+            context: ./mariadb/
+            dockerfile: mariadb.Dockerfile
+
+        volumes: 
+            - ./mariadb/db_data/:/var/lib/mysql/
+
+        networks: 
+            - website_stack
+
+        environment: 
+            #secrets section in docker-compose
+            MYSQL_ROOT_PASSWORD: djangopasswd
+            MYSQL_DATABASE: Django
+            MYSQL_USER: django
+            MYSQL_PASSWORD: djangousersqlroot
+
+networks: 
+    website_stack:

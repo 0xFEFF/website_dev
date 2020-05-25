@@ -25,6 +25,7 @@ services:
 
         volumes: 
             - ./nginx/webserver/conf/nginx/:/etc/nginx/
+            - ./nginx/webserver/django/:/var/www/html/
 
         expose:
             - '8080'
